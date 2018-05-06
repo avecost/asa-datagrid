@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Grid</title>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+        <style>
+            body { margin-top: 40px; }
+            th {
+                background-color: #2978AF;                
+                color: rgb(202, 201, 201) !important;
+                cursor: pointer;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+
+            th.active {
+                color: #fff !important;
+            }
+
+            th.active .arrow {
+                opacity: 1;
+            }
+
+            .arrow {
+                display: inline-block;
+                vertical-align: middle;
+                width: 0;
+                height: 0;
+                margin-left: 5px;
+                opacity: 0.66;
+            }
+
+            .arrow.asc {
+                border-left: 4px solid transparent;
+                border-right: 4px solid transparent;
+                border-bottom: 4px solid #fff;
+            }
+
+            .arrow.dsc {
+                border-left: 4px solid transparent;
+                border-right: 4px solid transparent;
+                border-top: 4px solid #fff;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div id="root" class="container">
+
+            <asa-datagrid
+                :dg-class="dgClass"
+                :columns="gridColumns"
+                :data="gridData"
+                :filter-key="searchQuery"
+                :action-href="actionHref"
+            >
+            </asa-datagrid>
+            <div class="level">
+                <div class="level-item">
+                    <nav class="pagination" role="navigation" aria-label="pagination">
+                        <a class="pagination-previous" :disabled="hasPrevious">Previous</a>
+                        <a class="pagination-next" :disabled="hasNext">Next Page</a>
+                    </nav>                            
+                </div>
+            </div>
+
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+        <script src="datagrid.vue.js"></script>
+        <script>
+            let app = new Vue({
+                el: '#root',
+                
+                data: {
+                    dgClass: 'table is-bordered is-fullwidth is-hoverable',
+                    searchQuery: '',
+                    actionHref: 'http://192.168.10.10/users',
+                    gridColumns: [
+                        'id', 'name', 'address'
+                    ],
+                    gridData: [
+                        { id: 1, name: 'arvin', address: 'qc' },
+                        { id: 2, name: 'robert', address: 'oz' },
+                        { id: 3, name: 'kyla', address: 'qc' },
+                        { id: 4, name: 'mary rose', address: 'antipolo' },
+                    ],
+                },
+
+                computed: {
+                    hasPrevious: function () {
+                        return this.gridData.length > 2;
+                    },
+
+                    hasNext: function () {
+                        return ! this.gridData.length > 2;
+                    },
+                },
+
+                created() {
+                    eventBus.$on('on-edit', (id) => {
+                        console.log("Parent handle edit event of " + id);
+                    }),
+
+                    eventBus.$on('on-delete', (id) => {
+                        console.log("Parent handle delete event of " + id);
+                    })
+                }
+
+            });
+        </script>
+    </body>
+</html>
